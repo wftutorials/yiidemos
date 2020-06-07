@@ -1,0 +1,9 @@
+assets/
+.idea/
+runtime/
+extensions/
+yii/
+/node_modules
+backup/
+uploads/
+emojis/
