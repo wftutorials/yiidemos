@@ -13,16 +13,12 @@ In this demo we create a task application.
 * view overdue tasks
 * delete tasks
 
-## Models
+## Files
+**Models** - In this tutorial we worked with the `ToDo.php` model.
 
-In this tutorial we worked with the `ToDo.php` model.
+**Controllers** - In this tutorial we worked with the `TodoController.php`.
 
-## Controllers
-
-In this tutorial we worked with the `TodoController.php`.
-
-## Views
-
+**Views**
 In this tutorial we created the following views in the `toDo` views directory
 * _form.php
 * completed.php
