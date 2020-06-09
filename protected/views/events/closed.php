@@ -1,23 +1,19 @@
 <?php
 /* @var $this EventsController */
-/* @var $model Events */
 
 $this->breadcrumbs=array(
-    'All Events',
+    'All Events' => $this->createUrl('/events/'),
+    'All Closed Events',
 );
 ?>
-<h1>All Events</h1>
-<p>Listing of all events</p>
-<p><a href="<?php echo $this->createUrl('/events/create');?>">Create New Event</a></p>
-<form action="<?php echo Yii::app()->request->url;?>">
-    <input type="text" name="search" placeholder="Search events"/><input type="submit"/>
-    <a href="<?php echo $this->createUrl('/events/');?>">Clear</a>
-</form>
+<h1>All Closed Events</h1>
+<p>Listing of all closed events</p>
+
 <div id="table-holder">
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'all-my-tasks-grid',
-        'dataProvider'=>$model->allOpen(),
-        'summaryText' => '<button id="close-event">Close Event</button>&nbsp;<button id="delete-event">Delete Event</button>&nbsp;',
+        'dataProvider'=>Events::model()->allClosed(),
+        'summaryText' => '<button id="open-events">Open event</button>&nbsp;<button id="delete-events">Delete event</button>&nbsp;',
         'selectableRows'=>0,
         'columns'=>array(
             array(
@@ -27,8 +23,6 @@ $this->breadcrumbs=array(
             ),
             array(
                 'name' => 'title',
-                'type' => 'raw',
-                'value' => '$data->titleLink()',
                 'htmlOptions'=> array('align'=>'center'),
             ),
             array(
@@ -49,25 +43,13 @@ $this->breadcrumbs=array(
                 'type' => 'raw',
                 'value' =>'$data->getStatus()'
             ),
-            array(
-                'name' => 'Register',
-                'type' => 'raw',
-                'value' =>'$data->registerLink()',
-                'htmlOptions'=> array('align'=>'center'),
-            ),
-            array(
-                'name' => 'Attendees',
-                'type' => 'raw',
-                'value' =>'$data->attendeesLink()',
-                'htmlOptions'=> array('align'=>'center'),
-            ),
         ),
     )); ?>
 </div>
 
 <script>
     $(document).ready(function(){
-        $('#table-holder').on('click','#close-event',function(){
+        $('#table-holder').on('click','#open-events',function(){
             var val = [];
             $('input[name=\"id[]\"]:checked:enabled').each(function(i){
                 val[i] = $(this).val();
@@ -76,10 +58,10 @@ $this->breadcrumbs=array(
                 alert('Please select at least one record!');
                 return false;
             }else {
-                var c = confirm('Are you sure you want set these as completed.');
+                var c = confirm('Are you sure you want set these events as open.');
                 if( c ){
                     var ids  = 'ids/'+val.join(',');
-                    $.get('/events/closeevents/'+ids)
+                    $.get('/events/OpenEvents/'+ids)
                         .done(function(){
                             $.fn.yiiGridView.update("all-my-tasks-grid", {
                                 data: $(this).serialize()
@@ -90,7 +72,7 @@ $this->breadcrumbs=array(
             return false;
         });
 
-        $('#table-holder').on('click','#delete-event',function(){
+        $('#table-holder').on('click','#delete-events',function(){
             var val = [];
             $('input[name=\"id[]\"]:checked:enabled').each(function(i){
                 val[i] = $(this).val();
@@ -102,7 +84,7 @@ $this->breadcrumbs=array(
                 var c = confirm('Are you sure you want to delete these tasks?');
                 if( c ){
                     var ids  = 'ids/'+val.join(',');
-                    $.get('/todo/deletetasks/'+ids)
+                    $.get('/events/DeleteEvents/'+ids)
                         .done(function(){
                             $.fn.yiiGridView.update("all-my-tasks-grid", {
                                 data: $(this).serialize()

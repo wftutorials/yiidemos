@@ -31,6 +31,7 @@ class EventAttendees extends CActiveRecord
 		return array(
 			array('event_id', 'numerical', 'integerOnly'=>true),
 			array('first_name, last_name, email, contact', 'length', 'max'=>45),
+            array('email', 'email'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, event_id, first_name, last_name, email, contact', 'safe', 'on'=>'search'),
@@ -93,6 +94,16 @@ class EventAttendees extends CActiveRecord
 		));
 	}
 
+	public function getAllByEvent($id=null){
+        $criteria=new CDbCriteria;
+	    if($id){
+            $criteria->addCondition('event_id='.$id);
+        }
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -103,4 +114,8 @@ class EventAttendees extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getEventName(){
+	    return Events::model()->findByPk($this->event_id)->title;
+    }
 }

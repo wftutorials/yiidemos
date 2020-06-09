@@ -1,5 +1,8 @@
 
 <div class="form">
+
+    <?php $this->getFlashMessage();?>
+
     <?php $form=$this->beginWidget('CActiveForm', array(
         'id'=>'event-form',
         'enableClientValidation'=>false,
@@ -22,6 +25,12 @@
         <?php echo $form->labelEx($model,'type'); ?>
         <?php echo $form->dropDownList($model,'type', Events::model()->getAllTypes()); ?>
         <?php echo $form->error($model,'type'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'venue'); ?>
+        <?php echo $form->textField($model,'venue'); ?>
+        <?php echo $form->error($model,'venue'); ?>
     </div>
 
     <div class="row">

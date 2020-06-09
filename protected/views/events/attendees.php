@@ -11,7 +11,7 @@ if($model->isNewRecord){
 }else{
     $this->breadcrumbs=array(
         'All Events' => $this->createUrl('/events/'),
-        $model->title => $this->createUrl('/events/',['id'=>$model->id]),
+        $model->title => $this->createUrl('/events/view',['id'=>$model->id]),
         'Attendees'
     );
 }
@@ -25,8 +25,8 @@ if($model->isNewRecord){
     <h5>Event Attendees Lising</h5>
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'all-my-tasks-grid',
-        'dataProvider'=>EventAttendees::model()->search(),
-        'summaryText' => 'Event Attendees &nbsp;<button id="mark-complete">Mark Completed</button>&nbsp;<button id="delete-tasks">Delete Tasks</button>&nbsp;',
+        'dataProvider'=>EventAttendees::model()->getAllByEvent($attendeeModel->event_id),
+        'summaryText' => 'Event Attendees &nbsp;<button id="delete-attendees">Delete Attendees</button>&nbsp;',
         'selectableRows'=>0,
         'columns'=>array(
             array(
@@ -47,6 +47,36 @@ if($model->isNewRecord){
             array(
                 'name' => 'contact',
             ),
+            array(
+                'name' => 'Event',
+                'value' => '$data->eventname'
+            ),
         ),
     )); ?>
 </div>
+<script>
+    $(document).ready(function(){
+        $('#table-holder').on('click','#delete-attendees',function(){
+            var val = [];
+            $('input[name=\"id[]\"]:checked:enabled').each(function(i){
+                val[i] = $(this).val();
+            });
+            if(val.length == 0){
+                alert('Please select at least one record!');
+                return false;
+            }else {
+                var c = confirm('Are you sure you want to delete these attendees?');
+                if( c ){
+                    var ids  = 'ids/'+val.join(',');
+                    $.get('/events/DeleteAttendees/'+ids)
+                        .done(function(){
+                            $.fn.yiiGridView.update("all-my-tasks-grid", {
+                                data: $(this).serialize()
+                            });
+                        });
+                }
+            }
+            return false;
+        });
+    });
+</script>

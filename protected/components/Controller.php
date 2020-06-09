@@ -20,4 +20,24 @@ class Controller extends CController
 	 * for more details on how to specify this property.
 	 */
 	public $breadcrumbs=array();
+
+    public function getFlashMessage(){
+        $o = "";
+        if(Yii::app()->user->hasFlash('success')){
+            $o .= "<div class='flash-success'>";
+            $o .= Yii::app()->user->getFlash('success');
+        }else if(Yii::app()->user->hasFlash('error')){
+            $o .= "<div class='flash-error'>";
+            $o .= Yii::app()->user->getFlash('error');
+        }else{
+            return ""; // return empty
+        }
+        $o .= "</div>";
+        echo $o;
+    }
+
+    public function setAlert($type, $message)
+    {
+        Yii::app()->user->setFlash($type, $message);
+    }
 }

@@ -2,13 +2,12 @@
 /* @var $this EventsController */
 /* @var $model Events */
 
-
 $this->breadcrumbs=array(
     'All Events' => $this->createUrl('/events/'),
     $model->title => $this->createUrl('/events/view/',['id'=>$model->id]),
-    'Registration'
+    'Update Event',
 );
 ?>
-    <h1>Register to <?php echo $model->title;?></h1>
-    <p>Register to event</p>
-<?php $this->renderPartial('_attendee',['attendeeModel'=>$attendeeModel,'model'=>$model]);?>
+    <h1><?php echo $model->title;?> (UPDATE)</h1>
+    <p>Update the event</p>
+<?php $this->renderPartial('_form',['model'=>$model]);

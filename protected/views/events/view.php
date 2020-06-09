@@ -7,10 +7,16 @@ $this->breadcrumbs=array(
     $model->title,
 );
 ?>
+<?php $this->getFlashMessage(); ?>
 <h1><?php echo $model->title;?></h1>
 <p><?php echo $model->description;?></p>
-<p><a href="<?php echo $this->createUrl('/events/update',['id'=>$this->id]);?>">
-        Edit this event</a></p>
+<p><a href="<?php echo $this->createUrl('/events/update',['id'=>$model->id]);?>">
+        Edit this event</a> |
+    <a href="<?php echo $this->createUrl('/events/register',['id'=>$model->id]);?>">
+        Register Event</a> |
+    <a href="<?php echo $this->createUrl('/events/attendees',['id'=>$model->id]);?>">
+        Attendees</a>
+</p>
 <br>
 <div>
     <p>Venue: <?php echo $model->venue;?></p>

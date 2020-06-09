@@ -1,5 +1,6 @@
 
 <div class="form">
+    <?php $this->getFlashMessage();?>
     <h5>Add a new attendee</h5>
     <?php $form=$this->beginWidget('CActiveForm', array(
         'id'=>'event-form',
@@ -12,13 +13,24 @@
     <p class="note">Fields with <span class="required">*</span> are required.</p>
 
     <?php echo $form->errorSummary($attendeeModel); ?>
-    <?php echo $form->hiddenField($attendeeModel,'event_id'); ?>
+
+    <?php if($attendeeModel->event_id):?>
+        <?php echo $form->hiddenField($attendeeModel,'event_id'); ?>
+    <?php else:?>
+        <div class="row">
+            <?php echo $form->labelEx($attendeeModel,'event_id'); ?>
+            <?php echo $form->dropDownList($attendeeModel,'event_id',
+                CHtml::listData(Events::model()->findAll(),'id','title')); ?>
+            <?php echo $form->error($attendeeModel,'event_id'); ?>
+        </div>
+    <?php endif;?>
 
     <div class="row">
         <?php echo $form->labelEx($attendeeModel,'first_name'); ?>
         <?php echo $form->textField($attendeeModel,'first_name'); ?>
         <?php echo $form->error($attendeeModel,'first_name'); ?>
     </div>
+
 
     <div class="row">
         <?php echo $form->labelEx($attendeeModel,'last_name'); ?>

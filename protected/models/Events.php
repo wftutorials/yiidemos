@@ -15,9 +15,12 @@
  * @property string $contactNumber
  * @property string $createdOn
  * @property string $type
+ * @property string $query
  */
 class Events extends CActiveRecord
 {
+
+    public $query = "";
 	/**
 	 * @return string the associated database table name
 	 */
@@ -107,6 +110,25 @@ class Events extends CActiveRecord
 		));
 	}
 
+	public function allOpen(){
+        $criteria=new CDbCriteria;
+        if($this->query){
+            $criteria->compare('title',$this->query,true);
+        }
+        $criteria->addCondition('closed=0');
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
+    public function allClosed(){
+        $criteria=new CDbCriteria;
+        $criteria->addCondition('closed=1');
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -129,7 +151,7 @@ class Events extends CActiveRecord
     }
 
     public function attendeesLink(){
-	    $counter = "0";
+	    $counter = EventAttendees::model()->count(['condition'=>'event_id = ' .$this->id]);
         $url = Yii::app()->createUrl("/events/attendees",['id'=>$this->id]);
         return CHtml::link($counter,$url);
     }
@@ -138,5 +160,12 @@ class Events extends CActiveRecord
 	    return [
 	        'General','Meeting','Conference','Presentation'
         ];
+    }
+
+    public function getStatus(){
+	    if($this->closed == 1){
+	        return "Closed";;
+        }
+	    return "Open";
     }
 }
