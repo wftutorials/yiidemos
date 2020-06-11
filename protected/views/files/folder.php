@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
     ucfirst($folderName)
 );
 ?>
-<h1>My Folders</h1>
+<h1>My <?php echo ucfirst($folderName);?> Folder</h1>
 <p>Listing of all files in</p>
 <div id="table-holder">
     <?php $this->widget('zii.widgets.grid.CGridView', array(

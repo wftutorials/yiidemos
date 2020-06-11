@@ -46,3 +46,24 @@ The files used for this demo are
 * Models - Events.php, EventAttendees.php
 * Views - The events folder
 * Layouts - The events.php layout in the layouts directory
+
+# File Manager Demo
+
+![files](https://yii.wftutorials.com/uploads/2020/06/362poo.png)
+
+In this demo we create a file manager application. This demo allows use to do the following
+* Upload files
+* Upload multiple Files
+* Organise files by folders
+* View uploaded files
+* Search for files
+* Trash files
+* Delete files permanently
+* Move files to diffrent folders
+
+## File
+The files used for this demo re
+* Controllers - `FilesController.php`
+* Models - [Files.php](https://github.com/wftutorials/yiidemos/blob/master/protected/models/Files.php), 
+[FileUploader](https://github.com/wftutorials/yiidemos/blob/master/protected/models/FileUploader.php)
+* View - the files folder
