@@ -15,7 +15,7 @@ class FilesController extends Controller
         }
         if(isset($_POST['FileUploader'])){
             $file = CUploadedFile::getInstance($uploader,'file');
-            if($this->uploadFile($file)){
+            if($this->uploadFile($file,"root")){
                 $this->setAlert("success", "File Uploaded");
             }
         }
@@ -31,15 +31,16 @@ class FilesController extends Controller
         $uploader = new FileUploader();
         if(isset($_POST['FileUploader'])){
             $files = CUploadedFile::getInstances($uploader,'file');
+            $uploader->attributes = $_POST['FileUploader'];
             foreach($files as $file){
-                $this->uploadFile($file);
+                $this->uploadFile($file, $uploader->folder);
             }
             $this->setAlert("success", "File Uploaded");
         }
         $this->render('upload',['model'=>$uploader]);
     }
 
-    private function uploadFile(CUploadedFile $file){
+    private function uploadFile(CUploadedFile $file, $folder=null){
         $randname = $this->randName();
         $name = $file->getName();
         $ext = $file->getextensionName();
@@ -49,22 +50,87 @@ class FilesController extends Controller
         $fullPath =	Yii::app()->basePath."/../uploads/"  . $finalName;
         $file->saveAs($fullPath);
         $mimeType = mime_content_type($fullPath);
-        return $this->saveToDatabase($name, $mimeType, $url, $fileSize, $fullPath);
+        try{
+            return $this->saveToDatabase($name, $mimeType, $url, $fileSize, $fullPath, $folder);
+        }catch (Exception $e){
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, "files");
+            return null;
+        }
     }
 
-    private function saveToDatabase($name, $type, $link, $size, $path){
+    private function saveToDatabase($name, $type, $link, $size, $path, $folder){
         $file = new Files();
         $file->name = $name;
         $file->type = $type;
         $file->link = $link;
         $file->file_size = $size;
         $file->full_path = $path;
+        $file->folder = $folder;
         return $file->save();
     }
 
     public function actionTrash(){
-
+        $files = new Files();
+        $this->render('trash',['model'=>$files]);
     }
+
+    public function actionFolder(){
+        $files = new Files();
+        if(isset($_GET['name'])){
+            $name = $_GET['name'];
+        }else{
+            $name = "empty";
+        }
+        $this->render("folder",['model'=>$files,'folderName'=>$name]);
+    }
+
+    public function actionMove(){
+        if(isset($_POST['folder'])){
+            $folder = $_POST['folder'];
+            $fIds = explode(",", $_POST['ids']);
+            foreach($fIds as $id){
+                $file = Files::model()->findByPk($id);
+                $file->folder = $folder;
+                $file->update();
+            }
+        }
+    }
+
+    public function actionTrashFiles($ids){
+        if(Yii::app()->request->isAjaxRequest){
+            $fIds = explode(",", $ids);
+            foreach($fIds as $id){
+                $model = Files::model()->findByPk($id);
+                $model->deleted = 1;
+                $model->update();
+            }
+        }
+    }
+
+    public function actionPermanentlyRemove($ids){
+        if(Yii::app()->request->isAjaxRequest){
+            $fIds = explode(",", $ids);
+            foreach($fIds as $id){
+                $model = Files::model()->findByPk($id);
+                $path = $model->full_path;
+                if($model->delete()){
+                    unlink($path);
+                }
+            }
+        }
+    }
+
+    public function actionRestoreFiles($ids){
+        if(Yii::app()->request->isAjaxRequest){
+            $fIds = explode(",", $ids);
+            foreach($fIds as $id){
+                $model = Files::model()->findByPk($id);
+                $model->deleted = 0;
+                $model->update();
+            }
+        }
+    }
+
 
     private function randName($num = 6)
     {

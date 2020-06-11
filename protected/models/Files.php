@@ -34,8 +34,8 @@ class Files extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('deleted', 'numerical', 'integerOnly'=>true),
-			array('name, type, folder', 'length', 'max'=>45),
-			array('link', 'length', 'max'=>125),
+			array('folder', 'length', 'max'=>45),
+			array('name, link, type', 'length', 'max'=>125),
 			array('createdOn', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -85,12 +85,38 @@ class Files extends CActiveRecord
 	public function search()
 	{
 		$criteria=new CDbCriteria;
-		$criteria->compare('name', $this->query, true);
+		if($this->query){
+            $criteria->compare('name', $this->query, true);
+        }
+        $criteria->addCondition('deleted=0');
 		$criteria->order ='createdOn desc';
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+
+	public function getTrashed(){
+        $criteria=new CDbCriteria;
+        //$criteria->compare('name', $this->query, true);
+        $criteria->addCondition('deleted=1');
+        $criteria->order ='createdOn desc';
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
+	public function getByFolder($folder= null){
+        $criteria=new CDbCriteria;
+        if(empty($folder) || $folder=="empty" || $folder=="root"){
+            $criteria->addCondition('folder IS NULL OR folder="" OR folder="root"');
+        }else{
+            $criteria->compare('folder',$folder);
+        }
+        $criteria->order ='createdOn desc';
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -105,14 +131,44 @@ class Files extends CActiveRecord
 
 	public function getFolders(){
 	    return [
+	        'root' => 'Root',
 	        'home'=> 'Home',
             'pictures' => 'Pictures',
             'documents' => 'Documents',
+            'videos' => 'Videos',
+            'work' => 'Work'
         ];
     }
 
     public function getLinkedName(){
         $url = $this->link;
         return CHtml::link($this->name,$url,['target'=>"_blank"]);
+    }
+
+    public function getFilesCountByFolder($folder){
+	    if($folder=="root"){
+	        $criteria = new CDbCriteria();
+	        $criteria->addCondition("folder= '$folder' OR folder is null");
+            return Files::model()->count($criteria);
+        }else{
+            return Files::model()->count(['condition'=>'folder="'.$folder.'"']);
+        }
+    }
+
+    public function getIcon(){
+	    $img = "ic_file.png";
+	    if(strstr($this->type, "pdf")){
+            $img = "ic_pdf.png";
+        }else if(strstr($this->type, "audio")){
+            $img = "ic_audio.png";
+        }else if(strstr($this->type, "video")){
+            $img = "ic_video.png";
+        }else if(strstr($this->type, "openxmlformats")){
+            $img = "ic_word.png";
+        }else if(strstr($this->type, "image")){
+            $img = "ic_image.png";
+        }
+
+	    return CHtml::image("../images/icons/$img");
     }
 }

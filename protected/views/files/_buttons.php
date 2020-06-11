@@ -10,7 +10,8 @@
 
     <span>Move to folder:</span>
     <?php echo CHtml::dropDownList('folders','', Files::model()->getFolders());?>
+    <button id="move-files">Move Files</button>
     &nbsp;
-    <button id="delete-tasks">Delete Files</button>&nbsp;
+    <button id="delete-files">Delete Files</button>&nbsp;
 
 </div>

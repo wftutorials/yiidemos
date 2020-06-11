@@ -34,6 +34,13 @@ $this->breadcrumbs=array(
         <?php echo $form->error($model,'file'); ?>
     </div>
 
+    <div class="row">
+        <?php echo $form->labelEx($model,'folder'); ?>
+        <?php echo $form->dropDownList($model,'folder',Files::getFolders()); ?>
+        <?php echo $form->error($model,'folder'); ?>
+        <p class="note">Save in a particular folder.</p>
+    </div>
+
     <div class="row buttons">
         <?php echo CHtml::submitButton('Submit'); ?>
     </div>

@@ -1,42 +1,29 @@
 <?php
 /* @var $this FilesController */
-/* @var $files Files */
+/* @var $model Files */
+/* @var $folderName string */
 
 $this->breadcrumbs=array(
-    'All Files',
+    'Files' => $this->createUrl("/files/"),
+    'Trash',
 );
 ?>
-<h1>All My Files</h1>
-<p>Listing of all my Files</p>
-<?php $this->getFlashMessage();?>
-<div style="border:1px solid #ccc; display:inline-block;; padding: 5px;">
-    <span><strong>Quick upload</strong></span>
-    <?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'file-form',
-        'htmlOptions'=>array(
-            'enctype' => 'multipart/form-data'
-        )
-    )); ?>
-    <?php echo $form->fileField($model,'file'); ?>
-    <?php echo CHtml::submitButton('Save'); ?>
-    <?php $this->endWidget(); ?>
-</div>
+<h1>Trash Bin</h1>
+<p>Listing of all deleted files</p>
 <div id="table-holder">
+    <div style="display: inline-block; margin-bottom: 3px;">
+        Bulk Actions: <button id="restore-files">Restore files</button>
+        <button id="delete-permanently">Delete Permanently</button>
+    </div>
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'all-my-files-grid',
-        'dataProvider'=>$files->search(),
-        'summaryText' => $this->renderPartial('_buttons', [], true),
+        'dataProvider'=>$model->getTrashed(),
         'selectableRows'=>0,
         'columns'=>array(
             array(
                 'id'=>'id',
                 'class'=>'CCheckBoxColumn',
                 'selectableRows' => '50',
-            ),
-            array(
-                'name' => '',
-                'type' => 'raw',
-                'value' => '$data->getIcon()'
             ),
             array(
                 'name' => 'name',
@@ -64,10 +51,10 @@ $this->breadcrumbs=array(
         ),
     )); ?>
 </div>
-
 <script>
     $(document).ready(function(){
-        $('#table-holder').on('click','#move-files',function(){
+
+        $('#table-holder').on('click','#restore-files',function(){
             var val = [];
             $('input[name=\"id[]\"]:checked:enabled').each(function(i){
                 val[i] = $(this).val();
@@ -76,32 +63,21 @@ $this->breadcrumbs=array(
                 alert('Please select at least one record!');
                 return false;
             }else {
-                var ids  = val.join(',');
-                var name = $('#folders').val();
-                console.log(name);
-                $.post('/files/move',{ids:ids, folder:name})
-                    .done(function(){
-                        $.fn.yiiGridView.update('all-my-files-grid', {
-                            data: $(this).serialize()
+                var c = confirm('Are you sure you want to restore these files?');
+                if( c ){
+                    var ids  = 'ids/'+val.join(',');
+                    $.get('/files/restorefiles/'+ids)
+                        .done(function(){
+                            $.fn.yiiGridView.update('all-my-files-grid', {
+                                data: $(this).serialize()
+                            });
                         });
-                    });
+                }
             }
             return false;
         });
-        $('#filter').submit(function(){
-            $.fn.yiiGridView.update('all-my-files-grid', {
-                data: $(this).serialize()
-            });
-            return false;
-        });
 
-        $("#clear-filter").on("click", function(){
-            $('input[name="search"').val("");
-            $('#filter').submit();
-            return false;
-        });
-
-        $('#table-holder').on('click','#delete-files',function(){
+        $('#table-holder').on('click','#delete-permanently',function(){
             var val = [];
             $('input[name=\"id[]\"]:checked:enabled').each(function(i){
                 val[i] = $(this).val();
@@ -113,7 +89,7 @@ $this->breadcrumbs=array(
                 var c = confirm('Are you sure you want to delete these files?');
                 if( c ){
                     var ids  = 'ids/'+val.join(',');
-                    $.get('/files/trashfiles/'+ids)
+                    $.get('/files/PermanentlyRemove/'+ids)
                         .done(function(){
                             $.fn.yiiGridView.update('all-my-files-grid', {
                                 data: $(this).serialize()

@@ -2,7 +2,7 @@
 /* @var $this ToDoController */
 
 $this->breadcrumbs=array(
-    'Files',
+    'My Folders',
 );
 ?>
 <h1>All My Folders</h1>
@@ -10,6 +10,7 @@ $this->breadcrumbs=array(
 <ul>
     <?php foreach($folders as $folder => $value){
         $url = $this->createUrl("/files/folder",['name'=>$folder]);
-        echo "<li><a href='$url'>" . $value . "</a></li>";
+        $count = Files::model()->getFilesCountByFolder($folder);
+        echo "<li><a href='$url'>" . $value . " ( $count )</a></li>";
     }?>
 </ul>
