@@ -40,4 +40,8 @@ class Controller extends CController
     {
         Yii::app()->user->setFlash($type, $message);
     }
+
+    public function getIcon($name, $width){
+        return CHtml::image("../images/icons/$name",'',["style"=>"width:$width"]);
+    }
 }
