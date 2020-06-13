@@ -42,6 +42,18 @@ class Controller extends CController
     }
 
     public function getIcon($name, $width){
-        return CHtml::image("../images/icons/$name",'',["style"=>"width:$width"]);
+        $base = Yii::app()->request->baseUrl."/images/icons/";
+        return CHtml::image($base.$name,'',["style"=>"width:$width"]);
+    }
+
+    protected function randName($num = 6)
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $string = '';
+        $max = strlen($characters) - 1;
+        for ($i = 0; $i < $num; $i++) {
+            $string .= $characters[mt_rand(0, $max)];
+        }
+        return $string;
     }
 }

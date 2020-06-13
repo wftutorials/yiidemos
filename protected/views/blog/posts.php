@@ -3,7 +3,8 @@
 /* @var $model Posts */
 
 $this->breadcrumbs=array(
-    'All Created Posts',
+    'Posts' => $this->createUrl("/blog/posts"),
+    'All Published posts',
 );
 ?>
 <h1>All Posts</h1>
@@ -12,7 +13,7 @@ $this->breadcrumbs=array(
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'all-my-tasks-grid',
         'dataProvider'=>$model->search(),
-        'summaryText' => '<button id="close-event">Close Event</button>&nbsp;<button id="delete-event">Delete Event</button>&nbsp;',
+        'summaryText' => '<button id="unpublish">Unpublish</button>&nbsp;<button id="delete">Delete</button>&nbsp;',
         'selectableRows'=>0,
         'columns'=>array(
             array(

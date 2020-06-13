@@ -132,7 +132,7 @@ class FilesController extends Controller
     }
 
 
-    private function randName($num = 6)
+    protected function randName($num = 6)
     {
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $string = '';

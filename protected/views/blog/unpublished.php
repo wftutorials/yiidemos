@@ -3,16 +3,17 @@
 /* @var $model Posts */
 
 $this->breadcrumbs=array(
-    'All Created Posts',
+        'Posts' => $this->createUrl("/blog/posts"),
+    'All Unpublished posts',
 );
 ?>
-<h1>All Posts</h1>
-<p>Listing of all posts</p>
+<h1>Unpublished Posts</h1>
+<p>Listing of all unpublished posts</p>
 <div id="table-holder">
     <?php $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'all-my-tasks-grid',
         'dataProvider'=>$model->search(),
-        'summaryText' => '<button id="close-event">Close Event</button>&nbsp;<button id="delete-event">Delete Event</button>&nbsp;',
+        'summaryText' => '<button id="publish">Publish</button>&nbsp;<button id="delete">Delete</button>&nbsp;',
         'selectableRows'=>0,
         'columns'=>array(
             array(

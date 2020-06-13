@@ -9,6 +9,7 @@ $this->breadcrumbs=array(
 <h1>Recent Posts</h1>
 <p>Listing of recent posts</p>
 
+<?php $this->getFlashMessage();?>
 <?php
 
 $this->widget('zii.widgets.CListView', array(

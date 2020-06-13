@@ -13,8 +13,15 @@ class BlogController extends Controller
     public function actionWrite(){
         $model = new Posts();
         if(isset($_POST["Posts"])){
+            $file = CUploadedFile::getInstance($model,'file');
             $model->attributes = $_POST['Posts'];
+            if($file){
+                $result = $this->uploadFile($file);
+                $model->featuredImage = $result["url"];
+            }
             $model->save();
+            $this->setAlert("success","Post created");
+            $this->redirect('/blog/');
         }
         $this->render("write",['model'=>$model]);
     }
@@ -49,6 +56,11 @@ class BlogController extends Controller
         }
         if(isset($_POST['Posts'])){
             $model->attributes = $_POST['Posts'];
+            $file = CUploadedFile::getInstance($model,'file');
+            if($file){
+                $result = $this->uploadFile($file);
+                $model->featuredImage = $result["url"];
+            }
             $model->update();
             $this->setAlert("success","Post successfully updated");
         }
@@ -56,8 +68,38 @@ class BlogController extends Controller
     }
 
     public function actionPostComment($id){
-        $model = Posts::model()->findByPk($id);
-        $this->render("postcomment",['model'=>$model]);
+        $post = Posts::model()->findByPk($id);
+        $model = new PostComment();
+        $model->post_id = $post->id;
+        if(isset($_POST["PostComment"])){
+            $model->attributes = $_POST["PostComment"];
+            $model->save();
+            $this->setAlert("success","Comment saved");
+            $this->redirect($this->createurl("/blog/post",['id'=>$id]));
+        }
+        $this->render("postcomment",['model'=>$model,'post'=>$post]);
+    }
+
+    private function uploadFile(CUploadedFile $file){
+        $randname = $this->randName();
+        $name = $file->getName();
+        $ext = $file->getextensionName();
+        $fileSize = $file->getSize();
+        $finalName = $randname . "." . $ext;
+        $url = Yii::app()->getBaseUrl(true) .'/uploads/' . $finalName;
+        $fullPath =	Yii::app()->basePath."/../uploads/"  . $finalName;
+        $file->saveAs($fullPath);
+        $mimeType = mime_content_type($fullPath);
+        try{
+            return [
+                "name"=>$name,
+                "mimetype"=>$mimeType,"url"=> $url,
+                "filesize"=>$fileSize, "fullpath"=>$fullPath
+            ];
+        }catch (Exception $e){
+            Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, "files");
+            return null;
+        }
     }
 
 

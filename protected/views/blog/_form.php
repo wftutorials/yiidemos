@@ -7,13 +7,22 @@
         'id'=>'event-form',
         'enableClientValidation'=>false,
         'clientOptions'=>array(
-            'validateOnSubmit'=>true,
+            'validateOnSubmit'=>false,
         ),
+        'htmlOptions'=>array(
+            'enctype' => 'multipart/form-data'
+        )
     )); ?>
 
     <p class="note">Fields with <span class="required">*</span> are required.</p>
 
     <?php echo $form->errorSummary($model); ?>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'file'); ?>
+        <?php echo $form->fileField($model,'file'); ?>
+        <?php echo $form->error($model,'file'); ?>
+    </div>
 
     <div class="row">
         <?php echo $form->labelEx($model,'title'); ?>
@@ -50,6 +59,14 @@
         <?php echo $form->labelEx($model,'author'); ?>
         <?php echo $form->textField($model,'author'); ?>
         <?php echo $form->error($model,'author'); ?>
+    </div>
+
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'published'); ?>
+        <?php echo $form->dropDownList($model,'published',
+            Posts::model()->getPublishStatus()); ?>
+        <?php echo $form->error($model,'published'); ?>
     </div>
 
 

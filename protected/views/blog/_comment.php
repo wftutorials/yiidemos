@@ -16,43 +16,17 @@
     <?php echo $form->errorSummary($model); ?>
 
     <div class="row">
-        <?php echo $form->labelEx($model,'title'); ?>
-        <?php echo $form->textField($model,'title'); ?>
-        <?php echo $form->error($model,'title'); ?>
+        <?php echo $form->labelEx($model,'user'); ?>
+        <?php echo $form->textField($model,'user'); ?>
+        <?php echo $form->error($model,'user'); ?>
     </div>
 
 
     <div class="row">
-        <?php echo $form->labelEx($model,'excerpt'); ?>
-        <?php echo $form->textField($model,'excerpt'); ?>
-        <?php echo $form->error($model,'excerpt'); ?>
+        <?php echo $form->labelEx($model,'comment'); ?>
+        <?php echo $form->textField($model,'comment'); ?>
+        <?php echo $form->error($model,'comment'); ?>
     </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model,'content'); ?>
-        <?php echo $form->textArea($model,'content',array('cols'=>50, 'rows'=>8)); ?>
-        <?php echo $form->error($model,'content'); ?>
-    </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model,'category'); ?>
-        <?php echo $form->dropDownList($model,'category', Posts::model()->getCategories()); ?>
-        <?php echo $form->error($model,'category'); ?>
-    </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model,'tags'); ?>
-        <?php echo $form->textField($model,'tags'); ?>
-        <?php echo $form->error($model,'tags'); ?>
-    </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model,'author'); ?>
-        <?php echo $form->textField($model,'author'); ?>
-        <?php echo $form->error($model,'author'); ?>
-    </div>
-
-
 
     <div class="row buttons">
         <?php echo CHtml::submitButton('Submit'); ?>
