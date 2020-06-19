@@ -1,6 +1,7 @@
 <?php
 /* @var $this BlogController */
 /* @var $model Posts */
+/* @var $comment PostComment */
 
 $this->breadcrumbs=array(
         'Posts' => $this->createUrl("/blog/posts"),
@@ -16,7 +17,7 @@ $this->breadcrumbs=array(
         <a href="<?php echo $this->createUrl('/blog/postedit',['id'=>$model->id]);?>">
             <?php echo $this->getIcon("ic_pencil.png","15px");?>edit</a>
         |
-        <a href="#">
+        <a href="<?php echo $this->createUrl('/blog/postcomment',['id'=>$model->id]);?>">
             <?php echo $this->getIcon("ic_comment.png","15px");?>&nbsp;comment
         </a>
         |
@@ -33,9 +34,11 @@ $this->breadcrumbs=array(
 
     <div class="post-layout">
 
+        <?php if($model->featuredImage):?>
         <div class="post-layout-featured">
-            <img src="https://app.wftutorials.com/uploads/2020/06/iwc53b.jpg" width="100%"/>
+            <img src="<?php echo $model->featuredImage;?>" width="100%"/>
         </div>
+        <?php endif;?>
 
         <div class="post-layout-content">
             <span><?php echo nl2br($model->content);?></span>
@@ -44,4 +47,15 @@ $this->breadcrumbs=array(
     </div>
     <br><br>
     <hr>
-    <h5>Comments (5)</h5>
+    <h5>Comments (<?php echo $model->getAllComments();?>)</h5>
+
+<?php
+
+$this->widget('zii.widgets.CListView', array(
+    'dataProvider'=>$comment->commentsbyId($model->id),
+    'summaryText' => '',
+    'itemView'=>'comment_view',   // refers to the partial view named '_post'
+    'sortableAttributes'=>array(
+    ),
+));
+?>

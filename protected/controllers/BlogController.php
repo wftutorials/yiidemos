@@ -28,6 +28,12 @@ class BlogController extends Controller
 
     public function actionPosts(){
         $model = new Posts();
+        if(isset($_GET['Posts'])){
+            $model->attributes = $_GET["Posts"];
+        }
+        if(isset($_GET['category'])){
+            $model->category = $_GET["category"];
+        }
         $this->render("posts",['model'=>$model]);
     }
 
@@ -38,15 +44,23 @@ class BlogController extends Controller
 
     public function actionPost($id){
         $model = Posts::model()->findByPk($id);
+        $comment = new PostComment();
         if($model == null){
             throw new Exception("Post not found");
         }
-        $this->render("post",['model'=>$model]);
+        $this->render("post",['model'=>$model,'comment'=>$comment]);
 
     }
 
+    public function actionLike($id){
+        $model = Posts::model()->findByPk($id);
+        $model->likes = $model->likes +1;
+        $model->update();
+    }
+
     public function actionComments(){
-        $this->render("comments");
+        $model = new PostComment();
+        $this->render("comments",['model'=>$model]);
     }
 
     public function actionPostEdit($id){
@@ -100,6 +114,23 @@ class BlogController extends Controller
             Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, "files");
             return null;
         }
+    }
+
+    public function actionPublishing($ids, $action){
+        $Ids = explode(",", $ids);
+        foreach($Ids as $id){
+            $post = Posts::model()->findByPk($id);
+            if($action == "publish"){
+                $post->published = 1;
+            }else{
+                $post->published = 0;
+            }
+            $post->update();
+        }
+    }
+
+    public function actionRemovePostsBulk($ids){
+        Posts::model()->updateAll(['deleted'=>1],['condition'=>'id IN('.$ids.')']);
     }
 
 

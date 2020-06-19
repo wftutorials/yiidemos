@@ -8,6 +8,7 @@
  * @property integer $post_id
  * @property string $comment
  * @property string $createdOn
+ * @property string $user
  */
 class PostComment extends CActiveRecord
 {
@@ -28,7 +29,7 @@ class PostComment extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('post_id', 'numerical', 'integerOnly'=>true),
-			array('comment, createdOn', 'safe'),
+			array('user, comment, createdOn', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, post_id, comment, createdOn', 'safe', 'on'=>'search'),
@@ -97,4 +98,18 @@ class PostComment extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getPostCommentUrl(){
+	    $url = Yii::app()->createUrl('/blog/post',['id'=>$this->post_id]);
+	    return CHtml::link($this->comment,$url);
+    }
+
+    public function commentsById($id){
+
+        $criteria=new CDbCriteria;
+        $criteria->addCondition('post_id='. $id);
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
 }

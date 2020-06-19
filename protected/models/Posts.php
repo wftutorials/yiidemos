@@ -16,6 +16,7 @@
  * @property string $featuredImage
  * @property integer $published
  * @property integer $likes
+ * @property integer $deleted
  */
 class Posts extends CActiveRecord
 {
@@ -38,7 +39,7 @@ class Posts extends CActiveRecord
 		// will receive user inputs.
 		return array(
 		    array('title, excerpt','required'),
-			array('published, likes', 'numerical', 'integerOnly'=>true),
+			array('deleted, published, likes', 'numerical', 'integerOnly'=>true),
 			array('slug, title, excerpt, tags, featuredImage', 'length', 'max'=>125),
 			array('category', 'length', 'max'=>45),
 			array('author', 'length', 'max'=>65),
@@ -116,6 +117,32 @@ class Posts extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function allPublished(){
+        $criteria=new CDbCriteria;
+        $criteria->compare('title',$this->title,true);
+        $criteria->compare('category',$this->category,true);
+        $criteria->addCondition('published=1');
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
+    public function allUnPublished(){
+        $criteria=new CDbCriteria;
+        $criteria->addCondition('published=0');
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
+
+    public function allRecent(){
+        $criteria=new CDbCriteria;
+        $criteria->addCondition('published=1');
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+    }
 
     protected function beforeSave()
     {
@@ -174,6 +201,24 @@ class Posts extends CActiveRecord
           1 => "Published"
         ];
     }
+
+    public function getViewLink(){
+        $url = Yii::app()->createUrl('/blog/post',['id'=>$this->id]);
+        return CHtml::link($this->title,$url,[]);
+    }
+
+    public function getEditLink(){
+        $url = Yii::app()->createUrl('/blog/postedit',['id'=>$this->id]);
+        return CHtml::link($this->title,$url,[]);
+    }
+
+    public function getAllComments(){
+        $criteria=new CDbCriteria;
+        $criteria->addCondition('post_id='.$this->id);
+	    return PostComment::model()->count($criteria);
+    }
+
+
 
 
 }
