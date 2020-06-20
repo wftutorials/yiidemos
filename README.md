@@ -67,3 +67,18 @@ The files used for this demo re
 * Models - [Files.php](https://github.com/wftutorials/yiidemos/blob/master/protected/models/Files.php), 
 [FileUploader](https://github.com/wftutorials/yiidemos/blob/master/protected/models/FileUploader.php)
 * View - the files folder
+
+
+# Mini blog demo
+
+![blog](https://yii.wftutorials.com/uploads/2020/06/5ene2w.png)
+
+In this demo we create a mini blog application. This demo as alot of features like
+* Create posts
+* Upload featured images
+* Share blog posts via unique url
+* Comment on posts
+* Tag posts
+* Edit posts
+* Publish and unpublish posts
+* Like posts
